@@ -1,0 +1,47 @@
+<?php
+
+use App\Http\Controllers\API\FatorahController;
+use App\Http\Controllers\front\HostingController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SlideShowController;
+use App\Models\webHosting;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+Auth::routes();
+
+//Route::get('/',  [App\Http\Controllers\HomeController::class, 'welcome'])->name('welcome');
+
+Route::get('/',function () {
+    $hostings = webHosting::all();
+    return view('welcome',compact('hostings'));
+});
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+Route::get('/search', [App\Http\Controllers\HomeController::class, 'search'])->name('search');
+
+Route::group([
+    'middleware' => 'auth',
+    //'prefix' => 'user'
+],function (){
+    Route::get('/dashbord',  [App\Http\Controllers\HomeController::class, 'Dashbord'])->name('dashbord');
+
+
+    Route::get('/payments/{id}', [FatorahController::class,'payorder'])->name('payments');
+    Route::get('Callback', [FatorahController::class,'Callback']);
+    Route::get('error',[FatorahController::class,'error'])->name('error');
+
+    Route::resource('Hosting',HostingController::class);
+
+});
